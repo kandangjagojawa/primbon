@@ -14,6 +14,9 @@
             <p class="text-amber-200 text-sm mt-1">Sistem Perhitungan Primbon Jawa Presisi (Betaljemur Adammakna)</p>
         </div>
 
+        <!-- Notifikasi Error (Otomatis Muncul jika ada masalah) -->
+        <div id="errorLog" class="hidden mx-6 mt-6 p-4 bg-red-100 text-red-700 border border-red-300 rounded-lg text-sm font-mono whitespace-pre-wrap"></div>
+
         <!-- Form Input -->
         <form id="primbonForm" class="p-6 border-b border-amber-100 grid grid-cols-1 md:grid-cols-3 gap-4">
             <div>
@@ -37,7 +40,6 @@
 
         <!-- Container Hasil Perhitungan -->
         <div id="hasilPrimbon" class="hidden p-6 space-y-6">
-            <!-- Ringkasan Profil -->
             <div class="bg-amber-50 p-5 rounded-xl border border-amber-200 flex flex-wrap justify-between items-center gap-4">
                 <div>
                     <h2 id="resNama" class="text-2xl font-serif font-bold text-amber-900"></h2>
@@ -50,9 +52,7 @@
             </div>
 
             <!-- Grid Perhitungan Detail -->
-            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3 text-sm" id="detailsGrid">
-                <!-- Data diinjeksi via JS -->
-            </div>
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3 text-sm" id="detailsGrid"></div>
 
             <!-- Analisis Watak & Prediksi -->
             <div class="space-y-4 pt-4 border-t border-amber-100">
@@ -83,8 +83,8 @@
         </div>
     </div>
 
-    <!-- Urutan Pemuatan File JS Penting: data.js DULU, baru app.js -->
-    <script src="data.js"></script>
-    <script src="app.js"></script>
+    <!-- PENTING: Penambahan "?v=3" akan memaksa browser mengunduh versi terbaru (bypass cache lama) -->
+    <script src="data.js?v=3"></script>
+    <script src="app.js?v=3"></script>
 </body>
 </html>
