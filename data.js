@@ -1,5 +1,5 @@
-// Dataset Primbon & Pawukon Jawa Sesuai Kitab Betaljemur Adammakna
-const PRIMBON_DATA = {
+// Dataset Primbon & Pawukon Jawa (Betaljemur Adammakna)
+window.PRIMBON_DATA = {
     neptuDina: { "Minggu": 5, "Senin": 4, "Selasa": 3, "Rabu": 7, "Kamis": 8, "Jumat": 6, "Sabtu": 9 },
     neptuPasaran: { "Legi": 5, "Pahing": 9, "Pon": 7, "Wage": 4, "Kliwon": 8 },
     wukuList: [
@@ -12,22 +12,22 @@ const PRIMBON_DATA = {
     astawaraList: ["Sri", "Indra", "Guru", "Yama", "Rudra", "Brama", "Kala", "Uma"],
     sangawaraList: ["Dangu", "Jagur", "Gigis", "Kutu", "Nobohan", "Wong", "Nohan", "Wurung", "Dadi"],
     pancasudaList: [
-        "Lebur Katiup Angin (Sisa 0/7: Banyak ujian, cita-cita butuh ketabahan)",
-        "Wasesa Segara (Sisa 1: Pemaaf, berwibawa, & dilapangkan rejekinya)",
-        "Tunggak Semi (Sisa 2: Rejeki selalu ada dan senantiasa berkembang)",
+        "Lebur Katiup Angin (Sisa 0/7: Banyak rintangan, cita-cita butuh ketabahan ekstra)",
+        "Wasesa Segara (Sisa 1: Pemaaf, berwibawa, & dilapangkan jalan rejekinya)",
+        "Tunggak Semi (Sisa 2: Rejeki senantiasa ada dan selalu tumbuh berkembang)",
         "Satriya Wibawa (Sisa 3: Mendapatkan kemuliaan, kehormatan, & keluhuran)",
-        "Sumur Sinaba (Sisa 4: Berwawasan luas, tempat berguru & bertanya)",
-        "Bumi Kapetak (Sisa 5: Pekerja keras, tahan menderita, tekun)",
-        "Satriya Lelaku (Sisa 6: Suka mengembara, kuat prihatin, mandiri)"
+        "Sumur Sinaba (Sisa 4: Berwawasan luas, sering menjadi tempat berguru)",
+        "Bumi Kapetak (Sisa 5: Pekerja keras, tahan menderita, tangguh & tekun)",
+        "Satriya Lelaku (Sisa 6: Suka mengembara, kuat prihatin, namun mandiri)"
     ],
     ekaJalaRsiList: [
         "Kama Suka (Suka keindahan & kedamaian)",
-        "Langgeng (Langgeng dalam kedudukan)",
-        "Linuwih (Memiliki kelebihan/keutamaan)",
-        "Kalis (Selamat dari rintangan)",
-        "Mulyo (Mulia & dihormati lingkungan)",
+        "Langgeng (Langgeng dalam kedudukan/pekerjaan)",
+        "Linuwih (Memiliki kelebihan/keutamaan khusus)",
+        "Kalis (Selamat dari rintangan & mara bahaya)",
+        "Mulyo (Mulia & sangat dihormati lingkungan)",
         "Loro (Sering prihatin/sakit)",
-        "Pati (Perlu kehati-hatian dalam mengambil keputusan)"
+        "Pati (Perlu kehati-hatian tinggi dalam keputusan)"
     ],
     sasiJawa: [
         "Sura", "Sapar", "Mulud (Rabiulawal)", "Bakda Mulud (Rabiulakhir)", 
@@ -41,7 +41,7 @@ const PRIMBON_DATA = {
     ],
     tahunJawaList: ["Alip", "Ehe", "Jimawal", "Je", "Dal", "Be", "Wawu", "Jimakir"],
     winduList: [
-        { nama: "Adi", lambang: "Lintang (Cahaya Kemuliaan)" },
+        { nama: "Adi", lambang: "Lintang (Cahaya & Kemuliaan)" },
         { nama: "Kuntara", lambang: "Kera (Kecerdasan & Kelincahan)" },
         { nama: "Sengara", lambang: "Macan (Kewibawaan & Keberanian)" },
         { nama: "Sancaya", lambang: "Pohon (Pengayom & Kedamaian)" }
