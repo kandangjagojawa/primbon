@@ -11,7 +11,7 @@
         <!-- Header -->
         <div class="bg-amber-900 text-amber-100 p-6 text-center">
             <h1 class="text-3xl font-serif font-bold">Primbon & Pawukon Jangkep</h1>
-            <p class="text-amber-200 text-sm mt-1">Sistem Perhitungan Weton, Neptu, Wuku, & Primbon Jawa Presisi</p>
+            <p class="text-amber-200 text-sm mt-1">Sistem Perhitungan Primbon Jawa Presisi (Betaljemur Adammakna)</p>
         </div>
 
         <!-- Form Input -->
@@ -29,7 +29,7 @@
                 <input type="time" id="jamLahir" class="w-full px-3 py-2 border rounded-lg focus:ring-2 focus:ring-amber-500 outline-none">
             </div>
             <div class="md:col-span-3 mt-2">
-                <button type="submit" class="w-full bg-amber-800 hover:bg-amber-900 text-white font-medium py-2.5 rounded-lg transition duration-200 shadow-md">
+                <button type="submit" class="w-full bg-amber-800 hover:bg-amber-900 text-white font-medium py-3 rounded-lg transition duration-200 shadow-md">
                     Hitung Primbon Lengkap
                 </button>
             </div>
@@ -51,7 +51,7 @@
 
             <!-- Grid Perhitungan Detail -->
             <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3 text-sm" id="detailsGrid">
-                <!-- Data diinjeksi via JavaScript -->
+                <!-- Data diinjeksi via JS -->
             </div>
 
             <!-- Analisis Watak & Prediksi -->
@@ -83,6 +83,8 @@
         </div>
     </div>
 
+    <!-- Urutan Pemuatan File JS Penting: data.js DULU, baru app.js -->
+    <script src="data.js"></script>
     <script src="app.js"></script>
 </body>
 </html>
