@@ -7,26 +7,17 @@
     "Pahang", "Kuruwelut", "Marakeh", "Tambir", "Medangkungan", "Maktal", "Wuye", "Manail",
     "Prangbakat", "Bala", "Wugu", "Wayang", "Kulawu", "Dukut", "Watugunung"
   ],
-  "pranataMangsa": [
-    {"nama": "Kasa (Satu)", "rentang": "22 Jun - 2 Ags"},
-    {"nama": "Karo (Dua)", "rentang": "3 Ags - 25 Ags"},
-    {"nama": "Katelu (Tiga)", "rentang": "26 Ags - 18 Sep"},
-    {"nama": "Kapat (Empat)", "rentang": "19 Sep - 13 Okt"},
-    {"nama": "Kalima (Lima)", "rentang": "14 Okt - 9 Nov"},
-    {"nama": "Kanem (Enam)", "rentang": "10 Nov - 22 Des"},
-    {"nama": "Kapitu (Tujuh)", "rentang": "23 Des - 3 Feb"},
-    {"nama": "Kawolu (Delapan)", "rentang": "4 Feb - 1 Mar"},
-    {"nama": "Kasanga (Sembilan)", "rentang": "2 Mar - 25 Mar"},
-    {"nama": "Kasedya (Sepuluh)", "rentang": "26 Mar - 18 Apr"},
-    {"nama": "Jesta (Sebelas)", "rentang": "19 Apr - 11 Mei"},
-    {"nama": "Sadha (Duabelas)", "rentang": "12 Mei - 21 Jun"}
-  ],
-  "pancaSuda": [
-    "Sri (Murah Rejeki)",
-    "Rejeki (Banyak Keberuntungan)",
-    "Gedhong (Kaya Harta)",
-    "Loro (Sering Sakit/Ujian)",
-    "Pati (Sering Mengalami Kebuntuan)"
+  "sadwaraList": ["Tungle", "Aryang", "Warok", "Paningron", "Uwas", "Mawulu"],
+  "astawaraList": ["Sri", "Indra", "Guru", "Yama", "Rudra", "Brama", "Kala", "Uma"],
+  "sangawaraList": ["Dangu", "Jagur", "Gigis", "Kutu", "Nobohan", "Wong", "Nohan", "Wurung", "Dadi"],
+  "pancasudaList": [
+    "Lebur Katiup Angin",
+    "Satriya Lelaku",
+    "Wasesa Segara",
+    "Tunggak Semi",
+    "Satriya Wibawa",
+    "Sumur Sinaba",
+    "Bumi Kapetak"
   ],
   "hanacaraka": {
     "a": 1, "ha": 1, "na": 2, "ca": 3, "ra": 4, "ka": 5,
