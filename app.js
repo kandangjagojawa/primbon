@@ -1,6 +1,19 @@
 let dbData = {};
 
-// Load JSON Dataset saat pertama buka
+// Helper Fungsi Modulo Matematika Presisi (Mencegah Bug Bilangan Negatif)
+function mod(n, m) {
+    return ((n % m) + m) % m;
+}
+
+// Helper Hitung Julian Day Number (JDN) dari Tanggal Masehi
+function getJDN(year, month, day) {
+    const a = Math.floor((14 - month) / 12);
+    const y = year + 4800 - a;
+    const m = month + 12 * a - 3;
+    return day + Math.floor((153 * m + 2) / 5) + 365 * y + Math.floor(y / 4) - Math.floor(y / 100) + Math.floor(y / 400) - 32045;
+}
+
+// Load JSON Dataset
 fetch('./data.json')
     .then(res => res.json())
     .then(data => { dbData = data; })
@@ -9,50 +22,50 @@ fetch('./data.json')
 document.getElementById('primbonForm').addEventListener('submit', function(e) {
     e.preventDefault();
     if (!dbData.wukuList) {
-        alert("Data Primbon belum siap. Pastikan file data.json ada.");
+        alert("Data Primbon belum siap. Pastikan file data.json tersedia.");
         return;
     }
 
     const nama = document.getElementById('nama').value.trim();
-    let tglInput = new Date(document.getElementById('tglLahir').value);
+    let tglRaw = document.getElementById('tglLahir').value;
     const jamInput = document.getElementById('jamLahir').value;
 
-    let catatanJam = "Pukul kelahiran tidak diisi (Perhitungan standar sebelum Maghrib).";
-    
-    // Cek Perubahan Hari Jawa jika lahir >= 18:00 (Maghrib)
+    let [year, month, day] = tglRaw.split('-').map(Number);
+    let dateObj = new Date(year, month - 1, day);
+
+    let catatanJam = "Pukul kelahiran tidak diisi (Standar hitungan sebelum Maghrib).";
+
+    // Pergantian Hari Jawa: Lahir >= 18:00 (Maghrib) masuk ke weton esok harinya
     if (jamInput) {
         const [jam, menit] = jamInput.split(':').map(Number);
         if (jam >= 18) {
-            tglInput.setDate(tglInput.getDate() + 1);
-            catatanJam = `Lahir pukul ${jamInput} WIB (Masuk pergantian hari Jawa/setelah Maghrib).`;
+            dateObj.setDate(dateObj.getDate() + 1);
+            year = dateObj.getFullYear();
+            month = dateObj.getMonth() + 1;
+            day = dateObj.getDate();
+            catatanJam = `Lahir pukul ${jamInput} WIB (Masuk hari Jawa berikutnya/setelah Maghrib).`;
         } else {
-            catatanJam = `Lahir pukul ${jamInput} WIB (Sebelum pergantian hari Jawa).`;
+            catatanJam = `Lahir pukul ${jamInput} WIB (Sebelum pergantian hari Jawa/Maghrib).`;
         }
     }
 
-    const hasil = kalkulasiPrimbon(nama, tglInput);
+    const hasil = kalkulasiPrimbonJawa(nama, year, month, day);
     tampilkanHasil(nama, hasil, catatanJam);
 });
 
-function kalkulasiPrimbon(nama, dateObj) {
-    // Julian Day Number Algorithm untuk akurasi Kalender
-    const year = dateObj.getFullYear();
-    const month = dateObj.getMonth() + 1;
-    const day = dateObj.getDate();
+function kalkulasiPrimbonJawa(nama, year, month, day) {
+    const jdn = getJDN(year, month, day);
 
-    const a = Math.floor((14 - month) / 12);
-    const y = year + 4800 - a;
-    const m = month + 12 * a - 3;
-    const jdn = day + Math.floor((153 * m + 2) / 5) + 365 * y + Math.floor(y / 4) - Math.floor(y / 100) + Math.floor(y / 400) - 32045;
-
-    // Anchor: 1 Jan 2000 = Sabtu Kliwon (JDN: 2451545)
-    const diff = jdn - 2451545;
+    // Anchor Terverifikasi: 10 Desember 1973 = JDN 2442027 (Senin Pon, Wuku Sinta)
+    const anchorJDN = 2442027;
+    const diff = jdn - anchorJDN;
 
     const listDina = ["Minggu", "Senin", "Selasa", "Rabu", "Kamis", "Jumat", "Sabtu"];
     const listPasaran = ["Legi", "Pahing", "Pon", "Wage", "Kliwon"];
 
-    const dinaIdx = ((6 + (diff % 7)) % 7 + 7) % 7;
-    const pasaranIdx = ((4 + (diff % 5)) % 5 + 5) % 5;
+    // Hitung Siklus Hari & Pasaran
+    const dinaIdx = mod(1 + diff, 7);     // 10 Dec 1973 = Senin (Index 1)
+    const pasaranIdx = mod(2 + diff, 5);  // 10 Dec 1973 = Pon (Index 2)
 
     const dina = listDina[dinaIdx];
     const pasaran = listPasaran[pasaranIdx];
@@ -61,34 +74,52 @@ function kalkulasiPrimbon(nama, dateObj) {
     const neptuP = dbData.neptuPasaran[pasaran];
     const totalNeptu = neptuD + neptuP;
 
-    // Hitungan Wuku (Siklus 210 Hari)
-    // Reference Wuku: 1 Jan 2000 = Wuku Wayang (Index 26)
-    const wukuIdx = Math.abs((26 + Math.floor((diff % 210 + 210) / 7)) % 30);
+    // Hitung Pawukon (Siklus 210 Hari)
+    // 10 Dec 1973 adalah Hari ke-1 dalam siklus Pawukon (Wuku Sinta, Senin)
+    const pawukonDay = mod(1 + diff, 210);
+    const wukuIdx = Math.floor(pawukonDay / 7);
     const wuku = dbData.wukuList[wukuIdx];
 
-    // Hitungan Numerologi Nama (Hanacaraka)
+    // Hitung Paringkelan (Sadwara - 6 Hari)
+    const sadwaraIdx = mod(1 + diff, 6); // 10 Dec 1973 = Aryang (Index 1)
+    const paringkelan = dbData.sadwaraList[sadwaraIdx];
+
+    // Hitung Padewan (Astawara - 8 Hari)
+    const astawaraIdx = mod(1 + diff, 8); // 10 Dec 1973 = Indra (Index 1)
+    const padewan = dbData.astawaraList[astawaraIdx];
+
+    // Hitung Padangon (Sangawara - 9 Hari)
+    const sangawaraIdx = mod(7 + diff, 9); // 10 Dec 1973 = Wurung (Index 7)
+    const padangon = dbData.sangawaraList[sangawaraIdx];
+
+    // Hitung Pancasuda (Berdasarkan Total Neptu Modulo 7)
+    const pancaSudaIdx = totalNeptu % 7;
+    const pancaSuda = dbData.pancasudaList[pancaSudaIdx];
+
+    // Hitungan Numerologi Nama Hanacaraka
     let totalHitunganNama = 0;
     const cleanNama = nama.toLowerCase().replace(/[^a-z]/g, '');
     for (let char of cleanNama) {
         totalHitunganNama += dbData.hanacaraka[char] || 1;
     }
 
-    // Panca Suda & Padewan Formula
-    const pancaSudaIdx = (totalNeptu % 5 === 0) ? 4 : (totalNeptu % 5) - 1;
-    const pancaSuda = dbData.pancaSuda[pancaSudaIdx];
+    // Estimasi Kalender Jawa (Tahun Sultan Agung) & Windu
+    const tahunJawa = year + 584 - (month < 3 ? 1 : 0);
+    const winduList = ["Adi", "Kuntara", "Sengara", "Sancaya"];
+    const windu = winduList[mod(Math.floor(tahunJawa / 8), 4)];
 
-    // Pranata Mangsa Sederhana
-    const mangsaIdx = Math.floor((month - 1) % 12);
-    const mangsa = dbData.pranataMangsa[mangsaIdx];
+    // Estimasi Pranata Mangsa
+    const mangsaList = [
+        "Kapitu", "Kawolu", "Kasanga", "Kasedya", "Jesta", "Sadha",
+        "Kasa", "Karo", "Katelu", "Kapat", "Kalima", "Kanem"
+    ];
+    const mangsa = mangsaList[mod(month - 1, 12)];
 
     return {
         dina, pasaran, totalNeptu, wuku, pancaSuda, mangsa,
+        peringkelan, padewan, padangon,
         hitNama: totalHitunganNama,
-        tahunJawa: 1957 + (year - 2024), // Estimasi Tahun Jawa (Tahun Jimawal/Za)
-        windu: "Sengara",
-        padewan: (totalNeptu % 8 === 0) ? "Guru" : "Indra",
-        peringkelan: (totalNeptu % 6 === 0) ? "Tulus" : "Mawas",
-        ekaJalaRsi: (totalNeptu % 7 === 0) ? "Kama Suka" : "Langgeng"
+        tahunJawa, windu
     };
 }
 
@@ -100,22 +131,22 @@ function tampilkanHasil(nama, res, catatanJam) {
 
     const grid = document.getElementById('detailsGrid');
     grid.innerHTML = `
-        <div class="bg-amber-50/50 p-3 rounded-lg border"><b>Wuku:</b> ${res.wuku}</div>
-        <div class="bg-amber-50/50 p-3 rounded-lg border"><b>Pranata Mangsa:</b> ${res.mangsa.nama} (${res.mangsa.rentang})</div>
-        <div class="bg-amber-50/50 p-3 rounded-lg border"><b>Panca Suda:</b> ${res.pancaSuda}</div>
-        <div class="bg-amber-50/50 p-3 rounded-lg border"><b>Padewan:</b> ${res.padewan}</div>
-        <div class="bg-amber-50/50 p-3 rounded-lg border"><b>Paringkelan:</b> ${res.peringkelan}</div>
-        <div class="bg-amber-50/50 p-3 rounded-lg border"><b>Eka Jala Rsi:</b> ${res.ekaJalaRsi}</div>
-        <div class="bg-amber-50/50 p-3 rounded-lg border"><b>Tahun Jawa & Windu:</b> ${res.tahunJawa} Jawa / Windu ${res.windu}</div>
-        <div class="bg-amber-50/50 p-3 rounded-lg border"><b>Hitungan Nama (Hanacaraka):</b> ${res.hitNama}</div>
+        <div class="bg-amber-50/60 p-3 rounded-lg border border-amber-200"><b>Wuku:</b> ${res.wuku}</div>
+        <div class="bg-amber-50/60 p-3 rounded-lg border border-amber-200"><b>Pancasuda:</b> ${res.pancaSuda}</div>
+        <div class="bg-amber-50/60 p-3 rounded-lg border border-amber-200"><b>Pranata Mangsa:</b> Mangsa ${res.mangsa}</div>
+        <div class="bg-amber-50/60 p-3 rounded-lg border border-amber-200"><b>Padewan (Astawara):</b> ${res.padewan}</div>
+        <div class="bg-amber-50/60 p-3 rounded-lg border border-amber-200"><b>Paringkelan (Sadwara):</b> ${res.peringkelan}</div>
+        <div class="bg-amber-50/60 p-3 rounded-lg border border-amber-200"><b>Padangon (Sangawara):</b> ${res.padangon}</div>
+        <div class="bg-amber-50/60 p-3 rounded-lg border border-amber-200"><b>Tahun Jawa & Windu:</b> ${res.tahunJawa} Jawa / Windu ${res.windu}</div>
+        <div class="bg-amber-50/60 p-3 rounded-lg border border-amber-200"><b>Hitungan Nama (Hanacaraka):</b> ${res.hitNama}</div>
     `;
 
-    // Watak & Prediksi berdasarkan Neptu
-    document.getElementById('resWatak').innerText = `Individu kelahiran ${res.dina} ${res.pasaran} (Neptu ${res.totalNeptu}) berada di bawah naungan Wuku ${res.wuku} dan Panca Suda ${res.pancaSuda}. Berkarakter kuat, teguh pada pendirian, memikat, namun perlu mengontrol emosi ketika merasa terdesak.`;
-    document.getElementById('resKarir').innerText = `Sangat cocok berkarier di bidang kepemimpinan, perdagangan, atau kewirausahaan mandiri dibanding menjadi bawahan.`;
-    document.getElementById('resRejeki').innerText = `Rejeki cenderung stabil dan cenderung meningkat pesat di usia dewasa menengah (puncak keberuntungan di bawah naungan ${res.pancaSuda}).`;
-    document.getElementById('resJodoh').innerText = `Cocok berpasangan dengan individu ber-neptu 7, 12, atau 17 (seperti Senin Kliwon, Selasa Pahing, Sabtu Kliwon).`;
-    document.getElementById('resHariNaas').innerText = `Hari naas jatuh pada weton berselisih 4 hari (pancasuda), disarankan berhati-hati saat membuat keputusan besar di hari tersebut.`;
+    // Analisis Watak Berdasarkan Neptu
+    document.getElementById('resWatak').innerText = `${nama} yang lahir pada weton ${res.dina} ${res.pasaran} (Neptu ${res.totalNeptu}) bernaung di bawah Wuku ${res.wuku} dan Pancasuda ${res.pancaSuda}. Karakter utamanya berwawasan luas, pandai memberi nasihat, disegani lingkungan, namun terkadang memiliki pendirian yang keras serta emosi yang mudah tersulut jika merasa tidak dihargai.`;
+    document.getElementById('resKarir').innerText = `Sangat cocok berkarier sebagai konsultan, pengajar, wiraswasta, atau pimpinan organisasi. Kemampuan bicaranya didengar dan dipercaya orang banyak.`;
+    document.getElementById('resRejeki').innerText = `Di bawah naungan ${res.pancaSuda}, rejekinya cenderung stabil bagaikan mata air yang mengalir. Puncak keberuntungan finansial terjadi pada usia dewasa tengah.`;
+    document.getElementById('resJodoh').innerText = `Pasangan paling ideal adalah pemilik Neptu 8, 13, atau 18 (seperti Selasa Legi, Senin Pahing, Kamis Legi, Minggu Kliwon, atau Sabtu Pahing) untuk menghasilkan keharmonisan rumah tangga.`;
+    document.getElementById('resHariNaas').innerText = `Disarankan lebih berhati-hati pada hari yang berselisih 4 hari dari weton kelahiran (Hari Naas/Pancasuda) saat merencanakan hajat besar atau perjalanan jauh.`;
 
     document.getElementById('hasilPrimbon').classList.remove('hidden');
 }
